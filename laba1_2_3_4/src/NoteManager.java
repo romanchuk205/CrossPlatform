@@ -1,3 +1,7 @@
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -5,17 +9,24 @@ import java.util.stream.Collectors;
 
 public class NoteManager {
     private List<Note> notes;
+    private static final String FILE_NAME = "notes.json";
 
     public NoteManager() {
         notes = new ArrayList<>();
+        loadNotesFromFile();
     }
 
     public void addNote(Note note) {
         notes.add(note);
+        saveNotesToFile();  // Зберігаємо нотатку після додавання
     }
 
     public boolean deleteNote(int id) {
-        return notes.removeIf(note -> note.getId() == id);
+        boolean removed = notes.removeIf(note -> note.getId() == id);
+        if (removed) {
+            saveNotesToFile();  // Зберігаємо після видалення
+        }
+        return removed;
     }
 
     public Note getNoteById(int id) {
@@ -30,6 +41,7 @@ public class NoteManager {
         if (note != null) {
             note.setTitle(title);
             note.setContent(content);
+            saveNotesToFile();  // Зберігаємо після оновлення
             return true;
         }
         return false;
@@ -72,5 +84,30 @@ public class NoteManager {
         return notes.stream()
                 .sorted(Comparator.comparing(Note::getLastModifiedTime))
                 .collect(Collectors.toList());
+    }
+
+    // Метод для збереження нотаток у файл
+    private void saveNotesToFile() {
+        Gson gson = new Gson();
+        try (FileWriter writer = new FileWriter(FILE_NAME)) {
+            gson.toJson(notes, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Метод для завантаження нотаток із файлу
+    private void loadNotesFromFile() {
+        Gson gson = new Gson();
+        try (FileReader reader = new FileReader(FILE_NAME)) {
+            notes = gson.fromJson(reader, new TypeToken<List<Note>>(){}.getType());
+            if (notes == null) {
+                notes = new ArrayList<>();  // Якщо в файлі немає нотаток, ініціалізуємо порожній список
+            }
+        } catch (FileNotFoundException e) {
+            // Якщо файл не знайдений, то просто починаємо з порожнього списку
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -7,7 +7,7 @@ public class NotebookApp {
     private boolean running;
 
     public NotebookApp() {
-        noteManager = new NoteManager();
+        noteManager = new NoteManager();  // Це завантажить нотатки з файлу
         scanner = new Scanner(System.in);
         running = true;
     }
