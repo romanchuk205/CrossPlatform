@@ -1,4 +1,3 @@
-// Файл: NoteManager.java
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,30 +39,35 @@ public class NoteManager {
         return new ArrayList<>(notes);
     }
 
+    // Пошук нотаток за назвою
     public List<Note> searchNotesByTitle(String keyword) {
         return notes.stream()
                 .filter(note -> note.getTitle().toLowerCase().contains(keyword.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
+    // Пошук нотаток за змістом
     public List<Note> searchNotesByContent(String keyword) {
         return notes.stream()
                 .filter(note -> note.getContent().toLowerCase().contains(keyword.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
+    // Сортування нотаток за назвою
     public List<Note> sortNotesByTitle() {
         return notes.stream()
                 .sorted(Comparator.comparing(Note::getTitle))
                 .collect(Collectors.toList());
     }
 
+    // Сортування нотаток за часом створення
     public List<Note> sortNotesByCreationTime() {
         return notes.stream()
                 .sorted(Comparator.comparing(Note::getCreationTime))
                 .collect(Collectors.toList());
     }
 
+    // Сортування нотаток за часом останньої модифікації
     public List<Note> sortNotesByLastModifiedTime() {
         return notes.stream()
                 .sorted(Comparator.comparing(Note::getLastModifiedTime))
